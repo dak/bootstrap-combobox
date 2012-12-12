@@ -78,6 +78,7 @@
     if (this.$container.hasClass('combobox-selected')) {
       this.clearTarget()
       this.$element.val('').focus()
+      this.$target.trigger('change')
     } else {
       if (this.shown) {
         this.hide()
