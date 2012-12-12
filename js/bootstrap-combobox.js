@@ -1,5 +1,6 @@
 /* =============================================================
- * bootstrap-combobox.js v0.9.7
+ * bootstrap-combobox.js v1.0.0a
+ * Modified by Derek Kent
  * =============================================================
  * Copyright 2012 Daniel Farrell
  *
@@ -90,7 +91,6 @@
     this.$target.val('')
     this.$container.removeClass('combobox-selected')
     this.selected = false
-    this.$target.trigger('change')
   }
 
   , refresh: function () {
@@ -136,10 +136,7 @@
         .on('blur',     $.proxy(this.blur, this))
         .on('keypress', $.proxy(this.keypress, this))
         .on('keyup',    $.proxy(this.keyup, this))
-
-      if ($.browser.webkit || $.browser.msie) {
-        this.$element.on('keydown', $.proxy(this.keypress, this))
-      }
+        .on('keydown',  $.proxy(this.keypress, this))
 
       this.$menu
         .on('click', $.proxy(this.click, this))
@@ -174,7 +171,9 @@
 
         default:
           this.clearTarget()
+          this.refresh()
           this.lookup()
+          this.$target.trigger('change:keyup')
       }
 
       e.stopPropagation()
@@ -203,15 +202,15 @@
   $.fn.combobox = function ( option ) {
     return this.each(function () {
       var $this = $(this)
-        , data
+        , data = $this.data('combobox')
         , options = typeof option == 'object' && option
-      $this.data('combobox', (data = new Combobox(this, options)))
+      if(!data) $this.data('combobox', (data = new Combobox(this, options)))
       if (typeof option == 'string') data[option]()
     })
   }
 
   $.fn.combobox.defaults = {
-  template: '<div class="combobox-container"><input type="text" /><span class="add-on btn dropdown-toggle" data-dropdown="dropdown"><span class="caret"/><span class="combobox-clear"><i class="icon-remove"/></span></span></div>'
+  template: '<div class="combobox-container"><input type="text" autocomplete="off" /><span class="add-on btn dropdown-toggle" data-dropdown="dropdown"><span class="caret"/><span class="combobox-clear"><i class="icon-remove"/></span></span></div>'
   , menu: '<ul class="typeahead typeahead-long dropdown-menu"></ul>'
   , item: '<li><a href="#"></a></li>'
   , placeholder: null
@@ -219,4 +218,4 @@
 
   $.fn.combobox.Constructor = Combobox
 
-}( window.jQuery )
+}( window.jQuery );
